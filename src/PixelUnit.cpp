@@ -27,6 +27,8 @@ bool PixelUnit::timeToggleLed() {
             pixelOff();
         }
 
+        pixelStrip->show(); // show changes
+
         /* update the timestamp */
         timestampLast = millis();
         
@@ -37,6 +39,7 @@ bool PixelUnit::timeToggleLed() {
 }
 
 void PixelUnit::run() {
+    yield();
     /* --- FLASHING INDEFINITELY --- */
     if (mode == FLASHING_INDEF) {
         timeToggleLed();
@@ -60,7 +63,7 @@ void PixelUnit::run() {
 
     /* --- LED ON / OFF STATE UPDATES HANDLED IMMEDIATELY --- */
     /* --- NO NEED TO CONTINUALLY RUN CHECK THOSE STATES  ---*/
-   pixelStrip->show(); // show changes
+   yield();
 }
 
 /**
@@ -76,6 +79,8 @@ void PixelUnit::pixelOff() {
         /* turn off the led */
         pixelStrip->setPixelColor(pixelPos, 0, 0, 0);
     }
+
+    pixelStrip->show(); // show changes
 }
 
 /**
@@ -91,6 +96,8 @@ void PixelUnit::pixelOn() {
         /* turn off the led */
         pixelStrip->setPixelColor(pixelPos, r, g, b);
     }
+
+    pixelStrip->show(); // show changes
 }
 
 void PixelUnit::setPixelRGB(uint8_t _r, uint8_t _g, uint8_t _b) {
@@ -115,6 +122,7 @@ void PixelUnit::setPixelOn(bool _isOn) {
 
     /* update state var */
     isOn = _isOn;
+    pixelStrip->show(); // show changes
 }
 
 void PixelUnit::flashTimes(uint16_t _flashTimes, uint16_t _msDelayFlash) {
@@ -134,7 +142,7 @@ void PixelUnit::flashTimes(uint16_t _flashTimes, uint16_t _msDelayFlash) {
     isOn = false;
     
     /* reset the timestamp delay */
-    timestampLast = 0;
+    timestampLast = millis() +  _msDelayFlash;
 
     pixelOff();
 }
